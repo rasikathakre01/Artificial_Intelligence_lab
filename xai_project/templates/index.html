@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Explainable AI — IT Decision Support</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+
+<!-- ═══ TOPBAR ═══ -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-orb"></span>
+      <span class="brand-name">XAI · IT Decision Support</span>
+      <span class="brand-ver">v3.0</span>
+    </div>
+    <div class="topbar-right">
+      <span class="status-pill"><span class="pulse-dot"></span>Model Active · sklearn</span>
+      <span class="stack-pill">Decision Tree + SHAP + Flask</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-blob b1"></div>
+    <div class="hero-blob b2"></div>
+    <div class="hero-grid"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-tag"><span class="tag-dot"></span>AI-Powered · Transparent · Accountable</div>
+    <h1 class="hero-title">
+      Explainable AI for<br/>
+      <span class="gradient-text">IT Decision Support</span>
+    </h1>
+    <p class="hero-desc">
+      Enter real project numbers — budget, risk score, profit %, duration in months.
+      The system converts them to AI categories, runs a Decision Tree, then uses SHAP
+      to explain exactly why every decision was made.
+    </p>
+    <div class="hero-pills">
+      <div class="pill"><span>🌳</span>scikit-learn Decision Tree</div>
+      <div class="pill"><span>📊</span>SHAP Explainability</div>
+      <div class="pill"><span>🔢</span>Real Numeric Inputs</div>
+      <div class="pill"><span>🐍</span>Python Flask</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SYSTEM FLOW ═══ -->
+<section class="flow-section">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-tag">System Architecture</div>
+      <h2 class="sec-title">AI Pipeline Overview</h2>
+    </div>
+    <div class="flow-track">
+      <div class="flow-node node-input">
+        <div class="fn-ico">📥</div>
+        <div class="fn-name">User Input</div>
+        <div class="fn-desc">Real numeric values<br/>Budget · Risk · Profit · Duration</div>
+      </div>
+      <div class="flow-connector">
+        <div class="fc-line"></div>
+        <div class="fc-arrow"></div>
+      </div>
+      <div class="flow-node node-convert">
+        <div class="fn-ico">🔄</div>
+        <div class="fn-name">Data Conversion</div>
+        <div class="fn-desc">Numeric → Categories<br/>via threshold rules</div>
+      </div>
+      <div class="flow-connector">
+        <div class="fc-line"></div>
+        <div class="fc-arrow"></div>
+      </div>
+      <div class="flow-node node-tree">
+        <div class="fn-ico">🌳</div>
+        <div class="fn-name">Decision Tree</div>
+        <div class="fn-desc">sklearn classifier<br/>depth-4 trained model</div>
+      </div>
+      <div class="flow-connector">
+        <div class="fc-line"></div>
+        <div class="fc-arrow"></div>
+      </div>
+      <div class="flow-node node-rules">
+        <div class="fn-ico">📋</div>
+        <div class="fn-name">Rule Validation</div>
+        <div class="fn-desc">Domain logic<br/>cross-check</div>
+      </div>
+      <div class="flow-connector">
+        <div class="fc-line"></div>
+        <div class="fc-arrow"></div>
+      </div>
+      <div class="flow-node node-shap">
+        <div class="fn-ico">📊</div>
+        <div class="fn-name">SHAP Explainer</div>
+        <div class="fn-desc">Shapley attribution<br/>per feature</div>
+      </div>
+      <div class="flow-connector">
+        <div class="fc-line"></div>
+        <div class="fc-arrow"></div>
+      </div>
+      <div class="flow-node node-output">
+        <div class="fn-ico">⚡</div>
+        <div class="fn-name">AI Output</div>
+        <div class="fn-desc">Decision +<br/>Full Explanation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WORKSPACE ═══ -->
+<main class="workspace">
+  <div class="wrap workspace-grid">
+
+    <!-- ─── INPUT PANEL ─── -->
+    <aside class="card input-card">
+      <div class="card-header">
+        <div class="ch-icon">🖊</div>
+        <div class="ch-text">
+          <h3>Project Parameters</h3>
+          <p>Enter real numeric values for AI evaluation</p>
+        </div>
+      </div>
+
+      <div class="input-body">
+
+        <!-- Budget -->
+        <div class="field">
+          <div class="field-top">
+            <label class="field-label"><span>💰</span> Project Budget (USD)</label>
+            <span class="field-badge" id="badge-budget">—</span>
+          </div>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="f-budget" placeholder="e.g. 450000"
+                   min="1" max="10000000" step="1000"
+                   oninput="onFieldChange('budget')" onchange="onFieldChange('budget')"/>
+          </div>
+          <div class="conv-rule">
+            <span class="cr-chip low">  &lt; $300k = Low</span>
+            <span class="cr-chip mid">$300k–$700k = Medium</span>
+            <span class="cr-chip hi"> ≥ $700k = High</span>
+          </div>
+          <div class="field-hint">Enter total project cost in US dollars</div>
+        </div>
+
+        <!-- Risk -->
+        <div class="field">
+          <div class="field-top">
+            <label class="field-label"><span>⚠️</span> Risk Level (1–10)</label>
+            <span class="field-badge" id="badge-risk">—</span>
+          </div>
+          <div class="input-wrap range-wrap">
+            <input type="number" id="f-risk" placeholder="e.g. 5"
+                   min="1" max="10" step="1"
+                   oninput="onFieldChange('risk')" onchange="onFieldChange('risk')"/>
+            <div class="risk-scale">
+              <span class="rs-low">1  Low</span>
+              <div class="rs-bar">
+                <div class="rs-fill" id="rs-fill"></div>
+              </div>
+              <span class="rs-high">High  10</span>
+            </div>
+          </div>
+          <div class="conv-rule">
+            <span class="cr-chip low">1–3 = Low</span>
+            <span class="cr-chip mid">4–6 = Medium</span>
+            <span class="cr-chip hi">7–10 = High</span>
+          </div>
+          <div class="field-hint">Overall risk exposure on a 1–10 scale</div>
+        </div>
+
+        <!-- Profit -->
+        <div class="field">
+          <div class="field-top">
+            <label class="field-label"><span>📈</span> Expected Profit (%)</label>
+            <span class="field-badge" id="badge-profit">—</span>
+          </div>
+          <div class="input-wrap">
+            <input type="number" id="f-profit" placeholder="e.g. 35"
+                   min="0" max="500" step="0.5"
+                   oninput="onFieldChange('profit')" onchange="onFieldChange('profit')"/>
+            <span class="input-suffix">%</span>
+          </div>
+          <div class="conv-rule">
+            <span class="cr-chip low">&lt; 20% = Low</span>
+            <span class="cr-chip mid">20–49% = Medium</span>
+            <span class="cr-chip hi">≥ 50% = High</span>
+          </div>
+          <div class="field-hint">Return on investment as a percentage</div>
+        </div>
+
+        <!-- Duration -->
+        <div class="field">
+          <div class="field-top">
+            <label class="field-label"><span>🗓</span> Project Duration (months)</label>
+            <span class="field-badge" id="badge-duration">—</span>
+          </div>
+          <div class="input-wrap">
+            <input type="number" id="f-duration" placeholder="e.g. 9"
+                   min="1" max="120" step="1"
+                   oninput="onFieldChange('duration')" onchange="onFieldChange('duration')"/>
+            <span class="input-suffix">mo</span>
+          </div>
+          <div class="conv-rule">
+            <span class="cr-chip low">≤ 6 mo = Short</span>
+            <span class="cr-chip mid">7–12 mo = Medium</span>
+            <span class="cr-chip hi">&gt; 12 mo = Long</span>
+          </div>
+          <div class="field-hint">Estimated project completion time in months</div>
+        </div>
+
+        <button class="run-btn" id="run-btn" onclick="runDecision()">
+          <span class="rb-idle" id="rb-idle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5,3 19,12 5,21"/></svg>
+            Run AI Decision
+          </span>
+          <span class="rb-busy" id="rb-busy" style="display:none">
+            <svg class="spin" width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" fill="none" opacity="0.25"/><path d="M12 3a9 9 0 0 1 9 9" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+            Analyzing…
+          </span>
+        </button>
+
+        <div class="input-summary" id="input-summary" style="display:none">
+          <div class="is-title">Live Conversion Preview</div>
+          <div class="is-grid" id="is-grid"></div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- ─── RESULT AREA ─── -->
+    <div class="result-area" id="result-area">
+
+      <!-- PLACEHOLDER -->
+      <div class="card placeholder-card" id="placeholder-card">
+        <div class="ph-inner">
+          <div class="ph-icon-ring">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="22" stroke="rgba(74,144,226,0.3)" stroke-width="2"/>
+              <circle cx="24" cy="24" r="14" stroke="rgba(74,144,226,0.5)" stroke-width="2"/>
+              <circle cx="24" cy="24" r="6" fill="rgba(74,144,226,0.7)"/>
+            </svg>
+          </div>
+          <h3>Awaiting Input</h3>
+          <p>Enter your project values on the left and click <strong>Run AI Decision</strong> to receive a fully explainable AI recommendation.</p>
+          <div class="ph-checklist">
+            <div class="ph-check">✓ Real numeric input with threshold conversion</div>
+            <div class="ph-check">✓ sklearn Decision Tree classification</div>
+            <div class="ph-check">✓ SHAP Shapley feature attribution</div>
+            <div class="ph-check">✓ Step-by-step decision path trace</div>
+            <div class="ph-check">✓ Probability breakdown per outcome</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULT BLOCK -->
+      <div id="result-block" style="display:none">
+
+        <!-- ① Decision Banner -->
+        <div class="card decision-card" id="decision-card">
+          <div class="dc-verdict">
+            <div class="dcv-label">AI Decision</div>
+            <div class="dcv-badge" id="dcv-badge">—</div>
+            <div class="dcv-sub" id="dcv-sub">—</div>
+          </div>
+          <div class="dc-middle">
+            <div class="dc-explanation" id="dc-explanation">—</div>
+          </div>
+          <div class="dc-proba">
+            <div class="dcp-title">Outcome Probabilities</div>
+            <div class="proba-bars" id="proba-bars"></div>
+          </div>
+        </div>
+
+        <!-- ② Conversion Table -->
+        <div class="card conv-card" id="conv-card">
+          <div class="card-header">
+            <div class="ch-icon">🔄</div>
+            <div class="ch-text">
+              <h3>Data Conversion</h3>
+              <p>Your numeric inputs translated into AI categories</p>
+            </div>
+          </div>
+          <div class="conv-grid" id="conv-grid"></div>
+        </div>
+
+        <!-- ③ Two columns: Path + SHAP -->
+        <div class="two-col">
+
+          <div class="card path-card">
+            <div class="card-header">
+              <div class="ch-icon">🗺</div>
+              <div class="ch-text">
+                <h3>Decision Path</h3>
+                <p>Tree traversal — step by step</p>
+              </div>
+            </div>
+            <div class="path-body" id="path-body"></div>
+          </div>
+
+          <div class="card shap-card">
+            <div class="card-header">
+              <div class="ch-icon">📊</div>
+              <div class="ch-text">
+                <h3>SHAP Feature Influence</h3>
+                <p>Shapley attribution per input feature</p>
+              </div>
+            </div>
+            <div class="shap-body" id="shap-body"></div>
+            <div class="shap-legend">
+              <span class="leg-pos">■ Positive → pushes toward Approve</span>
+              <span class="leg-neg">■ Negative → pushes toward Reject</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div><!-- /result-block -->
+    </div>
+  </div><!-- /workspace-grid -->
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">XAI · IT Decision Support</div>
+    <div class="footer-meta">
+      <span>🎓 Student AI Project</span>
+      <span>🐍 Python · Flask · scikit-learn · SHAP</span>
+      <span>📅 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
